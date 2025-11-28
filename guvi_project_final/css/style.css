@@ -1,0 +1,15 @@
+/* bootstrap + custom css will be added */
+/* css/style.css */
+/* Keep to 2 fonts (one Google + system stack used in HTML) */
+body {
+  font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: #f8f9fb;
+  color: #222;
+}
+.container { max-width: 900px; }
+.mt-1 { margin-top: .5rem; }
+.mt-2 { margin-top: 1rem; }
+.mb-2 { margin-bottom: .5rem; }
+.logo { display:inline-flex; align-items:center; gap:.5rem; }
+.logo img { height:28px; width:28px; }
+.alert-placeholder { min-height: 48px; }

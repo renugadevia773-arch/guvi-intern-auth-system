@@ -1,0 +1,51 @@
+<!-- profile.html page -->
+ <!-- profile.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Profile</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+  <div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="logo"><img src="assets/icon.svg" alt=""><strong>Your Profile</strong></div>
+      <div>
+        <button id="logoutBtn" class="btn btn-outline-danger">Logout</button>
+      </div>
+    </div>
+
+    <div id="alert" class="alert-placeholder"></div>
+
+    <form id="profileForm" onsubmit="return false;">
+      <div class="form-group">
+        <label>Name</label>
+        <input id="name" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label>Age</label>
+        <input id="age" class="form-control" type="number" min="0">
+      </div>
+      <div class="form-group">
+        <label>DOB</label>
+        <input id="dob" class="form-control" type="date">
+      </div>
+      <div class="form-group">
+        <label>Contact</label>
+        <input id="contact" class="form-control" type="text">
+      </div>
+      <div class="d-flex">
+        <button id="saveProfile" class="btn btn-primary mr-2">Save</button>
+        <a class="btn btn-link" href="index.html">Home</a>
+      </div>
+    </form>
+  </div>
+
+  <script src="js/profile.js"></script>
+</body>
+</html>

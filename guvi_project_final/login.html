@@ -1,0 +1,41 @@
+<!-- login.html page -->
+ <!-- login.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Login</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+  <div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div class="logo"><img src="assets/icon.svg" alt=""><strong>Login</strong></div>
+      <div><a class="btn btn-link" href="index.html">Home</a></div>
+    </div>
+
+    <div id="alert" class="alert-placeholder"></div>
+
+    <form id="loginForm" onsubmit="return false;">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input id="email" type="email" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input id="password" type="password" class="form-control" required>
+      </div>
+      <div class="d-flex">
+        <button id="loginBtn" class="btn btn-primary mr-2">Login</button>
+        <a class="btn btn-link" href="register.html">Register</a>
+      </div>
+    </form>
+  </div>
+
+  <script src="js/login.js"></script>
+</body>
+</html>

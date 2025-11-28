@@ -1,0 +1,117 @@
+<?php // backend code here ?>
+<?php
+// php/register.php
+header('Content-Type: application/json; charset=utf-8');
+
+/*
+  This file registers a user into MySQL (users table).
+  It also creates an initial profile document in MongoDB (collection 'profiles').
+
+  Requirements:
+   - composer require mongodb/mongodb predis/predis
+   - MySQL 'users' table (see SQL below)
+*/
+
+/* ---- MySQL table SQL (run once) ----
+CREATE DATABASE IF NOT EXISTS guvi_intern;
+USE guvi_intern;
+CREATE TABLE IF NOT EXISTS users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(150) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+------------------------------------- */
+
+try {
+    require __DIR__ . '/vendor/autoload.php';
+} catch (\Throwable $e) {
+    // If composer autoload not found, return helpful error
+    echo json_encode(['success'=>false,'error'=>'Server misconfiguration: vendor autoload missing. Run composer install.']);
+    exit;
+}
+
+// -------------------- configuration (fill these values) --------------------
+$MYSQL_HOST = '127.0.0.1';
+$MYSQL_PORT = 3306;
+$MYSQL_DB   = 'guvi_intern';
+$MYSQL_USER = 'db_user';
+$MYSQL_PASS = 'db_pass';
+
+$MONGO_URI = 'mongodb://127.0.0.1:27017';
+$MONGO_DB  = 'guvi_intern';
+
+$REDIS_HOST = '127.0.0.1';
+$REDIS_PORT = 6379;
+$SESSION_TTL = 86400; // seconds
+// -------------------------------------------------------------------------
+
+// parse input
+$input = json_decode(file_get_contents('php://input'), true);
+if (!$input) {
+    echo json_encode(['success' => false, 'error' => 'Invalid JSON input']);
+    exit;
+}
+$name = trim($input['name'] ?? '');
+$email = trim($input['email'] ?? '');
+$password = $input['password'] ?? '';
+
+if (!$name || !$email || !$password) {
+    echo json_encode(['success' => false, 'error' => 'All fields required']);
+    exit;
+}
+
+// validate email
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    echo json_encode(['success' => false, 'error' => 'Invalid email']);
+    exit;
+}
+
+// connect mysql (mysqli)
+$mysqli = new mysqli($MYSQL_HOST, $MYSQL_USER, $MYSQL_PASS, $MYSQL_DB, $MYSQL_PORT);
+if ($mysqli->connect_errno) {
+    echo json_encode(['success'=>false,'error'=>'MySQL connect error: '.$mysqli->connect_error]);
+    exit;
+}
+$mysqli->set_charset('utf8mb4');
+
+// check existing
+$stmt = $mysqli->prepare("SELECT id FROM users WHERE email = ?");
+$stmt->bind_param('s', $email);
+$stmt->execute();
+$stmt->store_result();
+if ($stmt->num_rows > 0) {
+    echo json_encode(['success'=>false,'error'=>'Email already registered']);
+    $stmt->close();
+    exit;
+}
+$stmt->close();
+
+// insert user
+$hash = password_hash($password, PASSWORD_DEFAULT);
+$stmt = $mysqli->prepare("INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)");
+$stmt->bind_param('sss', $name, $email, $hash);
+$ok = $stmt->execute();
+if (!$ok) {
+    echo json_encode(['success'=>false,'error'=>'DB insert error: '.$stmt->error]);
+    $stmt->close();
+    exit;
+}
+$user_id = $stmt->insert_id;
+$stmt->close();
+
+// create profile in MongoDB
+$mongoClient = new MongoDB\Client($MONGO_URI);
+$profiles = $mongoClient->selectDatabase($MONGO_DB)->selectCollection('profiles');
+$profiles->insertOne([
+    'user_id' => (int)$user_id,
+    'name' => $name,
+    'age' => null,
+    'dob' => null,
+    'contact' => null,
+    'created_at' => new MongoDB\BSON\UTCDateTime()
+]);
+
+echo json_encode(['success'=>true,'user_id'=>$user_id]);
+exit;

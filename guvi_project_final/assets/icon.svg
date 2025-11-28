@@ -1,0 +1,7 @@
+<svg><!-- assets/icon.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+  <rect x="2" y="2" width="20" height="20" rx="3" ry="3" stroke-width="1.5"></rect>
+  <path d="M8 12h8M8 16h5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+</svg>
